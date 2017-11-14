@@ -147,7 +147,7 @@ def findContours(arg_img,arg_canvas, arg_MinMaxArea=False, arg_debug= False):
     if arg_MinMaxArea is not False:
         ctrs = filter(lambda x : arg_MinMaxArea[1]> cv2.contourArea(x) > arg_MinMaxArea[0] , ctrs)
     
-    print '>>> ', len(ctrs)
+    #print '>>> ', len(ctrs)
     for ctr in ctrs:
         #print 'Area: ', cv2.contourArea(ctr)
         cv2.drawContours(canvas, [ctr], 0, (0, 128, 255), 3)
@@ -183,8 +183,11 @@ def pca_contour(arg_ctr):
     test = np.reshape(arg_ctr, (np.product(arg_ctr.shape) / 2 ,2))
     mat = test.astype(np.float32)
     m, e = cv2.PCACompute(mat, mean = np.mean(mat, axis=0).reshape(1,-1))
-    center = tuple(m[0])
-    endpoint1 = tuple(m[0] + e[0]*200)
-    endpoint2 = tuple(m[0] + e[1]*50)
-    angle = 360 - angle_between(center , endpoint1)
-    return center, angle, endpoint1, endpoint2 
+    if len(m)>=1:
+        center = tuple(m[0])
+        endpoint1 = tuple(m[0] + e[0]*200)
+        endpoint2 = tuple(m[0] + e[1]*50)
+        angle = 360 - angle_between(center , endpoint1)
+        return center, angle, endpoint1, endpoint2 
+    else:
+        return False, False, False, False
